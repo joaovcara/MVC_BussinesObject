@@ -108,5 +108,46 @@ namespace MVC_BussinesObject.Controllers
         //}
         #endregion
 
+        #region Editar Get
+        //Get
+        public ActionResult Editar(int id)
+        {
+            //Instancia da classe alunoBll
+            AlunoBll alunoBll = new AlunoBll();
+
+            //utilizacao do metodo GetAluno setando apenas um (Single) onde usando a expressão lambda em que x.IdAluno tem que ser == ao Id que estou recebendo via parametro
+            Aluno aluno = alunoBll.GetAluno().Single(x => x.IdAluno == id);
+
+            //retornando aluno selecionado para View
+            return View(aluno);
+        }
+        #endregion
+
+        #region Editar Post
+        [HttpPost]
+        [ActionName("Editar")]
+        public ActionResult Editar_Post(int id)
+        {
+
+            AlunoBll alunoBll = new AlunoBll();
+            Aluno aluno = alunoBll.GetAluno().Single(x => x.IdAluno == id);
+
+            //utiliza o UpdateModel com sobrecarga de includeProperties para garantir que só estas propriedades serão alteradas 
+            UpdateModel(aluno, includeProperties: new[] { "IdAluno", "Email", "Idade", "DataCadastro", "Sexo"});
+
+            if (ModelState.IsValid)
+            {
+                //Usando o metodo Insert
+                alunoBll.AlunoUpdate(aluno);
+
+                //redirecionando para a index
+                return RedirectToAction("Index");
+            }
+
+            return View();
+
+        }
+        #endregion
+
     }
 }
